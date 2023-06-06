@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fencing Beep Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      height: 100vh;
+      color: white;
+    }
+
+    body {
+      background-image: url("background.svg");
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1 {
+      font-size: 8vw;
+    }
+
+    .current-number {
+      margin-top: 3vh;
+      font-size: 20vw;
+    }
+
+    .current-speed {
+      margin-top: 1vh;
+      font-size: 6vw;
+    }
+
+    .buttons {
+      margin-top: 3vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    .buttons button {
+      margin: 0 1vw;
+      padding: 1vh 2vw;
+      font-size: 4vw;
+      border: none;
+      background-color: white;
+      color: purple;
+      cursor: pointer;
+      outline: none;
+      border-radius: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .buttons button:hover {
+      background-color: purple;
+      color: white;
+    }
+
+    .buttons button:active {
+      transform: scale(0.95);
+    }
+
+    @media screen and (max-width: 600px) {
+      h1 {
+        font-size: 8vw;
+      }
+      
+      .current-number {
+        font-size: 16vw;
+      }
+      
+      .current-speed {
+        font-size: 6vw;
+      }
+      
+      .buttons button {
+        font-size: 4vw;
+        padding: 2vh 4vw;
+      }
+    }
+  </style>
+
+</head>
+<body>
+  <div class="container">
+    <div>
+      <h1>Fencing Beep Test</h1>
+    </div>
+    <div class="current-number" id="current-number">-</div>
+    <div class="current-speed" id="current-speed">Medium</div>
+    <div class="buttons">
+      <button onclick="startSpeaking(10)">10</button>
+      <button onclick="startSpeaking(20)">20</button>
+      <button onclick="startSpeaking(30)">30</button>
+      <button onclick="startSpeaking('infinite')">Infinite</button>
+      <button onclick="stopSpeaking()">Stop</button>
+    </div>
+  </div>
+
+  <script>
+    var intervalId = null;
+    var currentNumberElement = document.getElementById('current-number');
+    var currentSpeedElement = document.getElementById('current-speed');
+    var currentSpeed = 'medium';
+    var numbersToSpeak = 0;
+    var currentNumber = 0;
+    
+    function speakNumber() {
+      if (currentNumber < numbersToSpeak) {
+        var randomNumber = Math.floor(Math.random() * 12) + 1;
+        var numberToSpeak = randomNumber.toString();
+        var speech = new SpeechSynthesisUtterance(numberToSpeak);
+        speechSynthesis.speak(speech);
+        currentNumberElement.textContent = numberToSpeak;
+        currentNumber++;
+        if (numbersToSpeak === Infinity) {
+          currentSpeedElement.textContent = currentNumber + ' so far';
+        } else {
+          currentSpeedElement.textContent = numbersToSpeak - currentNumber + ' remaining';
+        }
+      } else {
+        stopSpeaking();
+      }
+    }
+    
+    function startSpeaking(number) {
+      stopSpeaking();
+      if (number === 'infinite') {
+        numbersToSpeak = Infinity;
+        currentSpeedElement.textContent = '0 so far';
+      } else {
+        numbersToSpeak = number;
+        currentSpeedElement.textContent = number + ' remaining';
+      }
+      currentNumber = 0;
+      intervalId = setInterval(speakNumber, 2000);
+      speakNumber(); // Initial number display
+    }
+    
+    function stopSpeaking() {
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+        currentNumberElement.textContent = "-";
+        currentSpeedElement.textContent = "";
+        numbersToSpeak = 0;
+        currentNumber = 0;
+      }
+    }
+    
+  </script>
+</body>
+</html>

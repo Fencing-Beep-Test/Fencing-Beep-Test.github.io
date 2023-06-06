@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fencing Beep Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      height: 100vh;
+      color: white;
+    }
+
+    body {
+      background-image: url("background.svg");
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1 {
+      font-size: 8vw; /* Adjust the font size as needed */
+    }
+
+    .current-number {
+      margin-top: 3vh; /* Adjust the margin as needed */
+      font-size: 20vw; /* Adjust the font size as needed */
+    }
+
+    .current-speed {
+      margin-top: 1vh; /* Adjust the margin as needed */
+      font-size: 6vw; /* Adjust the font size as needed */
+    }
+
+    .buttons {
+      margin-top: 3vh; /* Adjust the margin as needed */
+      display: flex;
+      justify-content: center;
+    }
+
+    .buttons button {
+      margin: 0 1vw; /* Adjust the margin as needed */
+      padding: 1vh 2vw; /* Adjust the padding as needed */
+      font-size: 4vw; /* Adjust the font size as needed */
+      border: none;
+      background-color: white;
+      color: purple;
+      cursor: pointer;
+      outline: none;
+      border-radius: 20px; /* Adjust the border radius for round corners */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .buttons button:hover {
+      background-color: purple;
+      color: white;
+    }
+
+    .buttons button:active {
+      transform: scale(0.95);
+    }
+
+    @media screen and (max-width: 600px) {
+      h1 {
+        font-size: 8vw; /* Adjust the font size as needed */
+      }
+      
+      .current-number {
+        font-size: 16vw; /* Adjust the font size as needed */
+      }
+      
+      .current-speed {
+        font-size: 6vw; /* Adjust the font size as needed */
+      }
+      
+      .buttons button {
+        font-size: 4vw; /* Adjust the font size as needed */
+        padding: 2vh 4vw; /* Adjust the padding as needed */
+      }
+    }
+  </style>
+
+</head>
+<body>
+  <div class="container">
+    <div>
+      <h1>Fencing Beep Test</h1>
+    </div>
+    <div class="current-number" id="current-number">-</div>
+    <div class="current-speed" id="current-speed">Medium</div>
+    <div class="buttons">
+      <button onclick="startSpeaking('slow')">Slow</button>
+      <button onclick="startSpeaking('medium')">Medium</button>
+      <button onclick="startSpeaking('fast')">Fast</button>
+      <button onclick="stopSpeaking()">Stop</button>
+    </div>
+  </div>
+
+  <script>
+    var intervalId = null;
+    var currentNumberElement = document.getElementById('current-number');
+    var currentSpeedElement = document.getElementById('current-speed');
+    var currentSpeed = 'medium';
+    
+    function speakNumber() {
+      var randomNumber = Math.floor(Math.random() * 12) + 1;
+      var numberToSpeak = randomNumber.toString();
+      var speech = new SpeechSynthesisUtterance(numberToSpeak);
+      speechSynthesis.speak(speech);
+      currentNumberElement.textContent = numberToSpeak;
+    }
+    
+    function startSpeaking(speed) {
+      stopSpeaking();
+      intervalId = setInterval(speakNumber, getIntervalSpeed(speed));
+      speakNumber(); // Initial number display
+      currentSpeedElement.textContent = capitalizeFirstLetter(speed);
+    }
+    
+    function stopSpeaking() {
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+        currentNumberElement.textContent = "-";
+        currentSpeedElement.textContent = "";
+      }
+    }
+    
+    function capitalizeFirstLetter(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+    
+    function getIntervalSpeed(speed) {
+      switch (speed) {
+        case 'slow':
+          return 2000;
+        case 'medium':
+          return 1000;
+        case 'fast':
+          return 500;
+        default:
+          return 1000;
+      }
+    }
+  </script>
+</body>
+</html>
